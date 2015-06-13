@@ -65,3 +65,15 @@ void RBL_remove(redBlack *x,int dado)
 {
     //função de remoção da RB
 }
+
+void RBL_ERD(redBlack *x){
+    if(!x) return;
+    RBL_ERD(x->esq);
+    if(x->isBlack==0){
+        printf("Valor: %d\tVermelho",x->raiz);
+    }else{
+        printf("Valor: %d\tPreto",x->raiz);
+    }
+    RBL_ERD(x->dir);
+
+}

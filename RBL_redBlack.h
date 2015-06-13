@@ -21,4 +21,6 @@ void RBL_insere(redBlack *x,int dado);
 
 void RBL_remove(redBlack *x,int dado);
 
+void RBL_ERD(redBlack *x);
+
 #endif	/* RBL_REDBLACK_H */

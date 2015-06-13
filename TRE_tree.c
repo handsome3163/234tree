@@ -5,3 +5,8 @@
 /**
  * Funções da árvore 2-3-4
  */
+
+void TRE_print(tree *x)
+{
+	
+}

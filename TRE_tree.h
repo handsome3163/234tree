@@ -7,4 +7,7 @@ typedef struct tree{
 	struct tree *pai;
 }tree;
 
+void TRE_print(tree *x);
+
+
 #endif	/* TRE_TREE_H */
