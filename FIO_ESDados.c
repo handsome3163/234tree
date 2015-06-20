@@ -3,23 +3,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 //Lê de arquivo, e  já insere em árvore
-void FIO_lerArquivo(char nomeArquivo[],tree *x)
-{
+tree* FIO_lerArquivo(char nomeArquivo[]){
     int i;
     FILE *file;
+    tree *x = NULL;
     if(!(file = fopen(nomeArquivo,"r"))) exit(0);
-    fscanf(file, "%d",tamanho);
-    while(1)
-    {
+    while(1){
         fscanf(file, "%d",i);
         if(feof(file))break;
         if (ferror(file)){
             printf("Erro ao ler arquivo de dados");
             exit(0);
         }
-        INS_insert(x,i);
+        x = TRE_insere(x,i);
     }
     fclose(file);
+    return x;
 }

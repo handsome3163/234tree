@@ -53,12 +53,78 @@ void RBL_rotacaoEsq (redBlack *x)
 
 void RBL_bal(redBlack *x, redBlack *no)
 {
-	//função de balanceamento da RB
+	redBlack *avo;
+    redBlack *tio = (*redBlack)malloc(sizeof(redBlack));
+    redBlack *pai = no->pai;
+    while(!pai->isBlack){
+        avo = pai->pai;
+        if(no->raiz < avo->raiz){
+            if(!avo->dir) tio->isBlack = 1;
+            else{
+                tio = avo->dir;
+                if(!tio->isBlack){
+                    pai->isBlack = 1;
+                    tio->isBlack = 1;
+                    avo->isBlack = 0;
+                    no = avo;
+                    pai = no->pai;
+                }else{
+                    if(no == pai->dir){
+                        RBL_rotacaoEsq(pai);
+                        no = pai;
+                        pai = no->pai;
+                    }
+                    pai->isBlack = 1;
+                    avo->isBlack = 0;
+                    RBL_rotacaoDir(avo);
+                }
+            }
+        }else{
+            if(no->raiz < avo->raiz){
+                if(!avo->esq) tio->isBlack = 1;
+                else{
+                    tio = avo->direita;
+                    if(!tio->isBlack){
+                        pai->isBlack = 1;
+                        tio->isBlack = 1;
+                        avo->isBlack = 0;
+                        no = avo;
+                        pai = no->pai;
+                    }else{
+                        if(no == pai->esq){
+                            RBL_rotacaoEsq(pai);
+                            no = pai;
+                            pai = no->pai;
+                        }
+                        pai->isBlack = 1;
+                        avo->isBlack = 0;
+                        RBL_rotacaoEsq(avo);
+                    }
+                }
+            }
+        }
+    x->isBlack = 1;
+    }
 }
 
 void RBL_insere(redBlack *x,int dado)
 {	
-	//função de balanceamento da RB
+	redBlack *aux = x,*auxPai, *novoNo;
+    novoNo = RBL_criaNo(dado);
+    if(!x->dir){
+        x->dir = novoNo;
+        novoNo->pai = x;
+        return;
+    }
+    while(aux){
+        auxPai = aux;
+        if(aux->raiz <= dado) aux = aux->dir;
+        else aux = aux->esq;
+    }
+    if(auxPai->raiz <= dado) auxPai->dir = novoNo;
+    else auxPai->esq = novoNo;
+    novoNo->pai = auxPai;
+    RBL_bal(auxPai,dado);
 }
 
 void RBL_remove(redBlack *x,int dado)
@@ -66,14 +132,3 @@ void RBL_remove(redBlack *x,int dado)
     //função de remoção da RB
 }
 
-void RBL_ERD(redBlack *x){
-    if(!x) return;
-    RBL_ERD(x->esq);
-    if(x->isBlack==0){
-        printf("Valor: %d\tVermelho",x->raiz);
-    }else{
-        printf("Valor: %d\tPreto",x->raiz);
-    }
-    RBL_ERD(x->dir);
-
-}

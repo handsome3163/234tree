@@ -1,11 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "CNV_conversao.h"
 #include "DEL_remocao.h"
 #include "FIO_ESDados.h"
-#include "INS_insercao.h"
 #include "RBL_redBlack.h"
 #include "TRE_tree.h"
-
-#include <stdio.h>
 
 int main(){
 	int flag;
@@ -14,7 +13,7 @@ int main(){
 	tree *x;
 	printf("Nome do arquivo a ser lido: ");
 	scanf(" %s", arq);
-	FIO_lerArquivo(arq,x);
+	x = FIO_lerArquivo(arq);
 	while(1){
 		printf("1. Inserir novo elemento na árvore 2-3-4\n");
 		printf("2. Remover elemento da árvore 2-3-4\n");
@@ -26,7 +25,7 @@ int main(){
 			case 1:
 				printf("Elemento a ser inserido: ");
 				scanf("%d",&elm);
-				INS_insercao(x,elm);
+				x = TRE_insere(x,elm);
 				system("clear");
 				break;
 			case 2:
@@ -41,6 +40,8 @@ int main(){
 			case 4:
 				CNV_conversao(x,rb);
 				RBL_ERD(rb);
+				printf("Pressione qualquer tecla para continuar...");
+				getchar();
 				system("clear");
 				break;
 			case 5:

@@ -2,7 +2,7 @@
 #define	RBL_REDBLACK_H
 
 typedef struct redBlack{
-	int dado;
+	int raiz;
 	struct redBlack *esq;
 	struct redBlack *dir;
 	struct redBlack *pai;
@@ -20,7 +20,5 @@ void RBL_bal(redBlack *x, redBlack *no);
 void RBL_insere(redBlack *x,int dado);
 
 void RBL_remove(redBlack *x,int dado);
-
-void RBL_ERD(redBlack *x);
 
 #endif	/* RBL_REDBLACK_H */
