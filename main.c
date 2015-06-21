@@ -7,7 +7,7 @@
 #include "TRE_tree.h"
 
 int main(){
-	int flag;
+	int flag,flag2;
 	char arq[30];
 	redBlack *rb = NULL;
 	tree *x = NULL;
@@ -31,7 +31,7 @@ int main(){
 			case 2:
 				printf("Elemento a ser removido: ");
 				scanf("%d",&elm);
-				DEL_remocao(x,elm);
+				x = TRE_remocao(x,elm);
 				system("clear");
 				break;
 			case 3:
@@ -42,6 +42,36 @@ int main(){
 				RBL_ERD(rb);
 				printf("Pressione qualquer tecla para continuar...");
 				getchar();
+				while(1){
+					printf("1. Inserir novo elemento na árvore Rubro-Negra\n");
+					printf("2. Remover elemento da árvore Rubro-Negra\n");
+					printf("3. Imprimir árvore Rubro-Negra\n");
+					printf("4. Sair\n");
+					scanf("%d",&flag2);
+					switch(flag){
+						case 1:
+							printf("Elemento a ser inserido: ");
+							scanf("%d",&elm);
+							rb = RBL_insere(rb,elm);
+							system("clear");
+							break;
+						case 2:
+							printf("Elemento a ser removido: ");
+							scanf("%d",&elm);
+							rb = RBL_remocao(rb,elm);
+							system("clear");
+							break;
+						case 3:
+							RBL_ERD(rb);
+							break;
+						case 4:
+							break;
+						default:
+							printf("Comando não reconhecido.");
+							break;
+					}
+					if(flag2==4)break;
+				}
 				system("clear");
 				break;
 			case 5:
