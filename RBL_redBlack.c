@@ -1,134 +1,143 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "RBK_redBlack.h"
+#include "RBL_redBlack.h"
 
-redBlack* RBL_criaNo(int dado)
-{
+redBlack* RBL_criaNo(int dado){
 	redBlack *novoNo;
 	novoNo = (redBlack*)calloc(1,sizeof(redBlack));
 	novoNo->dir = NULL;
 	novoNo->esq = NULL;
 	novoNo->pai = NULL;
 	novoNo->isBlack = 0;
-	novoNo->raiz = dado;
+	novoNo->dado = dado;
 	return novoNo;
 }
 
-void RBL_rotacaoDir (redBlack *x)
-{
-    redBlack *y,*z;
-    y = x->esq;
-    z = y->dir;
-    y->dir = x;
-    y->pai = x->pai;
-    x->pai = y;
-    if(z){
-        x->esq = z;
-        z->pai = x;
-    }else{
-        x->esq = NULL;
-    }
-    if(y->pai->raiz <= y->raiz) y->pai->dir = y;
-    else y->pai->esq = y;
-}
-
-void RBL_rotacaoEsq (redBlack *x)
-{
+void RBL_rotacaoDir (redBlack **x){
     redBlack *y,*z,*xPai;
-    y = x->dir;  
-    z = y->esq;
-    xPai = x->pai;
-    y->esq = x;
-    y->pai = xPai;
-    x->pai = y;
+    xPai = (*x)->pai;
+    y = (*x)->esq;
+    z = y->dir;
     if(z){
-        x->dir = z;
-        z->pai = x;
+        (*x)->esq = z;
+        z->pai = *x;
     }else{
-        x->dir = NULL;
+        (*x)->esq = NULL;
     }
-    if(xPai->raiz <= y->raiz) xPai->dir = y;
-    else xPai->esq = y;
-}
-
-void RBL_bal(redBlack *x, redBlack *no)
-{
-	redBlack *avo;
-    redBlack *tio = (*redBlack)malloc(sizeof(redBlack));
-    redBlack *pai = no->pai;
-    while(!pai->isBlack){
-        avo = pai->pai;
-        if(no->raiz < avo->raiz){
-            if(!avo->dir) tio->isBlack = 1;
-            else{
-                tio = avo->dir;
-                if(!tio->isBlack){
-                    pai->isBlack = 1;
-                    tio->isBlack = 1;
-                    avo->isBlack = 0;
-                    no = avo;
-                    pai = no->pai;
-                }else{
-                    if(no == pai->dir){
-                        RBL_rotacaoEsq(pai);
-                        no = pai;
-                        pai = no->pai;
-                    }
-                    pai->isBlack = 1;
-                    avo->isBlack = 0;
-                    RBL_rotacaoDir(avo);
-                }
-            }
-        }else{
-            if(no->raiz < avo->raiz){
-                if(!avo->esq) tio->isBlack = 1;
-                else{
-                    tio = avo->direita;
-                    if(!tio->isBlack){
-                        pai->isBlack = 1;
-                        tio->isBlack = 1;
-                        avo->isBlack = 0;
-                        no = avo;
-                        pai = no->pai;
-                    }else{
-                        if(no == pai->esq){
-                            RBL_rotacaoEsq(pai);
-                            no = pai;
-                            pai = no->pai;
-                        }
-                        pai->isBlack = 1;
-                        avo->isBlack = 0;
-                        RBL_rotacaoEsq(avo);
-                    }
-                }
-            }
-        }
-    x->isBlack = 1;
+    y->dir = *x;
+    (*x)->pai = y;
+    y->pai = xPai;
+    if(xPai != NULL){
+        if(y->pai->dado <= y->dado) y->pai->dir = y;
+        else y->pai->esq = y;
     }
 }
 
-void RBL_insere(redBlack *x,int dado)
-{	
-	redBlack *aux = x,*auxPai, *novoNo;
-    novoNo = RBL_criaNo(dado);
-    if(!x->dir){
-        x->dir = novoNo;
-        novoNo->pai = x;
+void RBL_rotacaoEsq (redBlack **x){
+    redBlack *y,*z,*xPai;
+    xPai = (*x)->pai;
+    y = (*x)->dir;  
+    z = y->esq;    
+    if(z){
+        (*x)->dir = z;
+        z->pai = *x;
+    }else{
+        (*x)->dir = NULL;
+    }
+    y->esq = (*x);
+    (*x)->pai = y;
+    y->pai = xPai;    
+    if(xPai != NULL){
+        if(xPai->dado <= y->dado) xPai->dir = y;
+        else xPai->esq = y;
+    }
+}
+
+void RBL_rewind(redBlack **x){
+    while(1){
+        if((*x)->pai == NULL) break;
+        else *x = (*x)->pai;
+    }
+}
+
+redBlack* RBL_insere(redBlack *x,int dado){	
+    redBlack *aux = x,*auxPai, *no,*tio =(redBlack*)malloc(sizeof(redBlack));
+    no = RBL_criaNo(dado);
+    if(x == NULL){
+        x = no;
+        x->isBlack = 1;
         return;
     }
     while(aux){
         auxPai = aux;
-        if(aux->raiz <= dado) aux = aux->dir;
+        if(aux->dado <= dado) aux = aux->dir;
         else aux = aux->esq;
     }
-    if(auxPai->raiz <= dado) auxPai->dir = novoNo;
-    else auxPai->esq = novoNo;
-    novoNo->pai = auxPai;
-    RBL_bal(auxPai,dado);
+    if(auxPai->dado <= dado) auxPai->dir = no;
+    else auxPai->esq = no;
+    no->pai = auxPai;
+    while(no->pai != NULL && no->isBlack == 0){
+        if(no->pai->isBlack == 1) break;
+        if(no->pai->pai != NULL){
+            if(no->pai == no->pai->pai->esq){ //se for neto à esquerda
+                if(!no->pai->pai->dir) tio->isBlack = 1;
+                else tio = no->pai->pai->dir;
+                if(tio->isBlack == 0){
+                    no->pai->isBlack = 1;
+                    tio->isBlack = 1;
+                    no->pai->pai->isBlack = 0;
+                    no = no->pai->pai;
+                }else{
+                    if(no == no->pai->dir){
+                        no = no->pai;
+                        RBL_rotacaoEsq(&no);
+                    }
+                    no->pai->isBlack = 1;
+                    no->pai->pai->isBlack = 0;
+                    RBL_rotacaoDir(&no->pai->pai);
+                }
+            }else{  //se for neto à direita
+                if(!no->pai->pai->esq) tio->isBlack = 1;
+                else tio = no->pai->pai->esq;
+                if(tio->isBlack == 0){
+                    no->pai->isBlack = 1;
+                    tio->isBlack = 1;
+                    no->pai->pai->isBlack = 0;
+                    no = no->pai->pai;
+                }else{
+                    if(no == no->pai->esq){
+                        no = no->pai;
+                        RBL_rotacaoDir(&no);
+                    }
+                    no->pai->isBlack = 1;
+                    no->pai->pai->isBlack = 0;
+                    RBL_rotacaoEsq(&no->pai->pai);
+                }
+            }
+        }else{
+            no = no->pai;
+        }
+        RBL_rewind(&x);
+        x->isBlack = 1;
+    }
+    RBL_rewind(&x);
+    return x;
 }
 
+/*
 void RBL_remove(redBlack *x,int dado)
 {
-    //função de remoção da RB
+    RBL_removeFix();
+}
+*/
+void RBL_ERD(redBlack *x){
+    if(!x) return;
+    RBL_ERD(x->esq);
+    printf("Valor = %d ",x->dado);
+    if(x->isBlack==1) printf("Cor = Preta\n");
+    else printf("Cor = Vermelha\n");
+    RBL_ERD(x->dir);
 }
 
+//void RBL_removeFix(redBlack *x, redBlack *no){
+//}

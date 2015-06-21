@@ -9,8 +9,8 @@
 int main(){
 	int flag;
 	char arq[30];
-	redBlack *rb;
-	tree *x;
+	redBlack *rb = NULL;
+	tree *x = NULL;
 	printf("Nome do arquivo a ser lido: ");
 	scanf(" %s", arq);
 	x = FIO_lerArquivo(arq);
