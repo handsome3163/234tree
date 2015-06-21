@@ -66,7 +66,7 @@ redBlack* RBL_insere(redBlack *x,int dado){
     if(x == NULL){
         x = no;
         x->isBlack = 1;
-        return;
+        return x;
     }
     while(aux){
         auxPai = aux;
@@ -128,7 +128,7 @@ redBlack* RBL_remove(redBlack *x,int dado){
     redBlack *no = x,*suc,*irmao,*fdir,*fesq,*rm;
     fdir = (redBlack*)calloc(1,sizeof(redBlack));
     fesq = (redBlack*)calloc(1,sizeof(redBlack));
-    int cor;
+
     while(no->dado != dado){
         if(no->dado < dado) no = no->dir;
         else no = no->esq;

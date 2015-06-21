@@ -18,7 +18,7 @@ void TRE_insChave(tree *x, int dado, tree *filho){
 }
 
 tree *TRE_insBusca(tree *x, int dado, int *tam, int *aux){
-	int i , j , pos, med;
+	int i , pos, med;
 	tree *temp, *filho;	
 	if (x == NULL)
 	{
@@ -29,7 +29,7 @@ tree *TRE_insBusca(tree *x, int dado, int *tam, int *aux){
 		pos = TRE_buscaBinaria(x,dado);
 		if (x->numChaves > pos && x->valor[pos] == dado)
 		{
-			printf("Erro: Valor já está contido.\n");
+			printf("Erro: Valor ja esta contido.\n");
 			*tam = 0;
 		}
 		else{	
@@ -67,6 +67,8 @@ tree *TRE_insBusca(tree *x, int dado, int *tam, int *aux){
 			}
 		}
 	}
+
+	return x;
 }
 
 tree *TRE_insere(tree *x,int dado){

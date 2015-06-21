@@ -1,4 +1,4 @@
-#include "TRE_tree"
+#include "TRE_tree.h"
 #include "FIO_ESDados.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +10,7 @@ tree* FIO_lerArquivo(char nomeArquivo[]){
     tree *x = NULL;
     if(!(file = fopen(nomeArquivo,"r"))) exit(0);
     while(1){
-        fscanf(file, "%d",i);
+        fscanf(file, "%d",&i);
         if(feof(file))break;
         if (ferror(file)){
             printf("Erro ao ler arquivo de dados");
