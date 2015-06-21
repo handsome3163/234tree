@@ -124,12 +124,155 @@ redBlack* RBL_insere(redBlack *x,int dado){
     return x;
 }
 
-/*
-void RBL_remove(redBlack *x,int dado)
-{
-    RBL_removeFix();
+redBlack* RBL_remove(redBlack *x,int dado){
+    redBlack *no = x,*suc,*irmao,*fdir,*fesq,*rm;
+    fdir = (redBlack*)calloc(1,sizeof(redBlack));
+    fesq = (redBlack*)calloc(1,sizeof(redBlack));
+    int cor;
+    while(no->dado != dado){
+        if(no->dado < dado) no = no->dir;
+        else no = no->esq;
+    }
+    // Caso não esteja na árvore
+    if(no == NULL){
+        printf("Valor não se encontra na árvore");
+        return x;
+    }    
+    rm = no;
+    // Caso tenha dois filhos
+    if(no->esq != NULL && no->dir != NULL){        
+        suc = no->dir;
+        while(suc->esq != NULL) suc = suc->esq;
+        no->dado = suc->dado;
+        no = suc; //Transforma caso "Dois filhos" em caso "Um filho" ou caso "folha"
+    }
+    // Caso Folha
+    if(!no->esq&&!no->dir){
+        if(no->isBlack == 0){   //Se for vermelho, não quebra nenhuma regra
+            if(no->pai->dir == no) no->pai->dir = NULL;
+            else no->pai->esq = NULL;
+            free(no);
+        }else{
+            while(no->isBlack == 1 && no->pai != NULL){
+                if(no->pai->esq == no){
+                    irmao = no->pai->dir;
+                    if(irmao->isBlack == 0){
+                        //CASO 1
+                        irmao->isBlack = 1;
+                        irmao->pai = 0;
+                        RBL_rotacaoEsq(&irmao->pai);
+                        irmao = no->pai->dir;
+                    }
+                    if(irmao->dir) fdir = irmao->dir;
+                    else fdir->isBlack = 1;
+                    if(irmao->esq) fesq = irmao->esq;
+                    else fesq->isBlack = 1;
+                    if(fdir->isBlack == 1 && fesq->isBlack == 1){
+                        //CASO 2
+                        irmao->isBlack = 0;
+                        while(no->pai != NULL && no->isBlack == 1){
+                            irmao->isBlack = 0;
+                            no = no->pai;
+                            if(no->pai) irmao = no->pai->dir;
+                        }
+                        if(no->isBlack == 0){
+                            no->isBlack = 1;
+                            break;
+                        }
+                    }else{
+                        if(fesq->isBlack == 0){
+                            //CASO 3
+                            fesq->isBlack = 1;
+                            irmao->isBlack = 0;
+                            RBL_rotacaoDir(&irmao);
+                            irmao = no->pai->dir;
+                            if(irmao->dir) fdir = irmao->dir;
+                            else fdir->isBlack = 1;
+                            if(irmao->esq) fesq = irmao->esq;
+                            else fesq->isBlack = 1;
+                        }
+                        //CASO 4
+                        irmao->isBlack = irmao->pai->isBlack;
+                        irmao->pai->isBlack = 1;
+                        fdir->isBlack = 1;
+                        RBL_rotacaoEsq(&no->pai);
+                        RBL_rewind(&x);
+                        no = x;
+                    }
+                    
+                }else{
+                    irmao = no->pai->esq;
+                    if(irmao->dir) fdir = irmao->dir;
+                    else fdir->isBlack = 1;
+                    if(irmao->esq) fesq = irmao->esq;
+                    else fesq->isBlack = 1;
+                    if(irmao->isBlack == 0){
+                        //CASO 1
+                        irmao->isBlack = 1;
+                        irmao->pai = 0;
+                        RBL_rotacaoDir(&irmao->pai);
+                        irmao = no->pai->esq;
+                    }
+                    if(fdir->isBlack == 1 && fesq->isBlack == 1){
+                        //CASO 2
+                        irmao->isBlack = 0;
+                        while(no->pai != NULL && no->isBlack == 1){
+                            irmao->isBlack = 0;
+                            no = no->pai;
+                            if(no->pai) irmao = no->pai->esq;
+                        }
+                        if(no->isBlack == 0){
+                            no->isBlack = 1;
+                            break;
+                        }
+                    }else{
+                        if(fdir->isBlack == 0){
+                            //CASO 3
+                            fdir->isBlack = 1;
+                            irmao->isBlack = 0;
+                            RBL_rotacaoEsq(&irmao);                            
+                            irmao = no->pai->esq;
+                            if(irmao->dir) fdir = irmao->dir;
+                            else fdir->isBlack = 1;
+                            if(irmao->esq) fesq = irmao->esq;
+                            else fesq->isBlack = 1;
+                        }
+                        //CASO 4
+                        irmao->isBlack = irmao->pai->isBlack;
+                        irmao->pai->isBlack = 1;
+                        fesq->isBlack = 1;
+                        RBL_rotacaoDir(&no->pai);                        
+                        RBL_rewind(&x);
+                        no = x;
+                    }
+                }
+            }            
+            if(rm->pai->dir == rm) rm->pai->dir = NULL;
+            else rm->pai->esq = NULL;
+            free(rm);
+        }
+        x->isBlack = 1;
+        return x;
+    }
+    if(no->esq == NULL ||no->dir == NULL){
+        if(no->esq == NULL){            
+            if(no->pai->esq == no)no->pai->esq = no->dir;
+            else no->pai->dir = no->dir; 
+            no->dir->pai = no->pai;
+            if(no->dir->isBlack == 0) no->dir->isBlack = 1;
+	}else{
+            if(no->pai->esq == no) no->pai->esq = no->esq;
+            else no->pai->dir = no->esq;
+            no->esq->pai = no->pai;
+            if(no->esq->isBlack == 0) no->esq->isBlack = 1;
+	}        
+        free(rm);
+    }
+    x->isBlack = 1;
+    return x;
 }
-*/
+
+
 void RBL_ERD(redBlack *x){
     if(!x) return;
     RBL_ERD(x->esq);
@@ -138,6 +281,3 @@ void RBL_ERD(redBlack *x){
     else printf("Cor = Vermelha\n");
     RBL_ERD(x->dir);
 }
-
-//void RBL_removeFix(redBlack *x, redBlack *no){
-//}

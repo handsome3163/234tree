@@ -19,12 +19,10 @@ void RBL_bal(redBlack **x, redBlack *no);
 
 redBlack* RBL_insere(redBlack *x,int dado);
 
-//void RBL_remove(redBlack *x,int dado);
+redBlack* RBL_remove(redBlack *x,int dado);
 
 void RBL_ERD(redBlack *x);
 
 void RBL_rewind(redBlack **x);
-
-//void RBL_removeFix(redBlack *x, redBlack *no);
 
 #endif	/* RBL_REDBLACK_H */
