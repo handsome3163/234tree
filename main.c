@@ -38,7 +38,7 @@ int main(int argc, char** argv){
                 TRE_print(x);
                 break;
             case 4:
-                CNV_converte();
+                rb = CNV_converter(x);
                 RBL_ERD(rb);
                 printf("Pressione qualquer tecla para continuar...");
                 getchar();
